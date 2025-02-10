@@ -26,7 +26,6 @@ which includes the response object and provides some hints to the user on how to
 the error.
 """
 
-import json
 import logging
 from json import JSONDecodeError
 from typing import Any, Optional, cast
@@ -309,10 +308,7 @@ def post(
     # post requires different headers than get for
     headers = {"accept": "*/*", "Content-Type": api_version_text(api_version)}
 
-    if isinstance(data, dict):
-        data = json.dumps(data)
-
-    response = SESSION.post(endpoint, params=params, headers=headers, data=data)
+    response = SESSION.post(endpoint, params=params, headers=headers, json=data)
     response.close()
 
     if response.status_code < 200 or response.status_code >= 300:
@@ -349,9 +345,7 @@ def patch(
     if data is None:
         response = SESSION.patch(endpoint, params=params, headers=headers)
     else:
-        if isinstance(data, dict):
-            data = json.dumps(data)
-        response = SESSION.patch(endpoint, params=params, headers=headers, data=data)
+        response = SESSION.patch(endpoint, params=params, headers=headers, json=data)
     response.close()
     if response.status_code < 200 or response.status_code >= 300:
         logging.error(f"CDA Error: response={response}")
